@@ -2,6 +2,8 @@ FROM golang:1.15
 
 WORKDIR /go/src/wiki
 
+RUN go get github.com/lib/pq
+
 RUN go get github.com/pilu/fresh
 COPY cmd/wiki/ .
 
