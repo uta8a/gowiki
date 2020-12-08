@@ -20,6 +20,6 @@ CREATE TABLE userinfo (
 /* insert */
 
 INSERT INTO userinfo (username, password_hash) VALUES (
-  'suburi-chan',
+  'test_user',
   'REDACTED1'
 );
