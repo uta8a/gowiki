@@ -9,6 +9,8 @@
 - https://github.com/golang-standards/project-layout/issues/1
   - /configs にmigration(db init)をおいてよさそう。
   - HandleFuncの内側でdbconnectを行う
+- https://qiita.com/hiro9/items/e6e41ec822a7077c3568
+  - pgweb使うと手軽そう
 
 # session
 - https://astaxie.gitbooks.io/build-web-application-with-golang/content/ja/06.0.html
@@ -27,7 +29,7 @@
   - エラーハンドリング
 
 # log
-- 2o2o/12/08
+- 2020/12/08
   - https://www.yoheim.net/blog.php?q=20170403
   - net/httpのみで実装してみる
   - swaggerをやって、先にAPIを決める
@@ -39,3 +41,7 @@
   - railsの方でDBの組み方について学びながら直していけばいいかも
   - JWTは後で考えるとして、セッションを素で実装してみることにする。素振りだし失敗したらCTFの問題になるからいいでしょう。
   - testはファイル分割のタイミングで書くとよさそう。
+- 2020/12/09
+  - http.HandleFuncと、NewServeMuxしてHandleFuncの違いが分かってない。
+  - driver localのdocker volumeがホストのどこにファイルが作成されるのか分かってない。
+  - ようやくEnvでDB接続URLつくるとこまできた。
