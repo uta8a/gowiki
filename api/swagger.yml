@@ -1,0 +1,47 @@
+openapi: '3.0.3'
+
+info:
+  title: 'Wiki RTA Go API'
+  version: '0.0.1'
+
+servers:
+  - url: 'http://localhost:9000/'
+    description: 'API Server'
+
+paths:
+  '/healthcheck':
+    get:
+      responses:
+        '200':
+          description: 'OK'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+
+components:
+  schemas:
+    Error:
+      description: 'Error'
+      type: object
+      required:
+        - message
+        - code
+      properties:
+        message:
+          title: 'error message'
+          type: string
+          example: 'unexpected error'
+        code:
+          title: 'status code'
+          type: integer
+          minimum: 100
+          maximum: 600
+          example: 500
+  responses:
+    OK:
+      description: 'ok'
+    UnexpectedError:
+      description: 'unexpected error'
+      content:
+        'application/json':
+          schema:
+            $ref: '#/components/schemas/Error'
