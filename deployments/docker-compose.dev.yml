@@ -5,6 +5,8 @@ services:
     build:
       context: ../
       dockerfile: build/builder/Dockerfile
+    volumes:
+      - ../cmd/wiki:/go/src/wiki
     ports:
       - "9000:9000"
     container_name: server
