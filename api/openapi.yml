@@ -5,7 +5,7 @@ info:
   version: '0.0.1'
 
 servers:
-  - url: 'http://localhost:9000/'
+  - url: 'http://localhost:9000/api/'
     description: 'API Server'
 
 paths:
@@ -16,6 +16,27 @@ paths:
           description: 'OK'
         default:
           $ref: '#/components/responses/UnexpectedError'
+  '/privatecheck':
+    get:
+      responses:
+        '200':
+          description: 'Auth OK, this is private'
+      security:
+        - Bearer: []
+  '/users':
+    post:
+      responses:
+        '200':
+          description: 'signup'
+  '/login':
+    post:
+      responses:
+        '200':
+          description: 'login'
+    delete:
+      responses:
+        '200':
+          description: 'logout'
 
 components:
   schemas:
@@ -45,3 +66,8 @@ components:
         'application/json':
           schema:
             $ref: '#/components/schemas/Error'
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+      description: 'credential token for API'
