@@ -22,6 +22,9 @@
   - logout `/login` DELETE
   - change user info `/users/<userid>` PUT
 
+# Error
+- https://tutuz-tech.hatenablog.com/entry/2020/03/26/193519
+  - エラーハンドリング
 
 # log
 - 2o2o/12/08

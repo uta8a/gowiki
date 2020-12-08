@@ -1,6 +1,16 @@
 version: '3'
 
 services:
+  db:
+    image: postgres:12.5-alpine
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=suburi
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=suburi_db
+    ports:
+      - 15432:5432
   server:
     build:
       context: ../
@@ -10,3 +20,6 @@ services:
     ports:
       - "9000:9000"
     container_name: server
+volumes:
+  db-data:
+    driver: local
