@@ -4,10 +4,10 @@ import (
 	"database/sql"
 	"fmt"
 	_ "github.com/lib/pq"
+	"github.com/suburi-dev/gowiki/internal/env"
+	"github.com/suburi-dev/gowiki/internal/route"
 	"log"
 	"net/http"
-  "github.com/suburi-dev/gowiki/internal/env"
-  "github.com/suburi-dev/gowiki/internal/route"
 )
 
 func main() {

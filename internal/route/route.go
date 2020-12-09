@@ -1,9 +1,9 @@
 package route
 
 import (
-  "database/sql"
-  "net/http"
-  "github.com/suburi-dev/gowiki/internal/handler"
+	"database/sql"
+	"github.com/suburi-dev/gowiki/internal/handler"
+	"net/http"
 )
 
 // Application State

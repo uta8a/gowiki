@@ -1,8 +1,8 @@
 package env
 
 import (
-  "os"
-  "log"
+	"log"
+	"os"
 )
 
 func Init(k string) string {

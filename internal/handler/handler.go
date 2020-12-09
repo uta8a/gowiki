@@ -1,9 +1,9 @@
 package handler
 
 import (
-	"net/http"
-	"fmt"
 	"encoding/json"
+	"fmt"
+	"net/http"
 )
 
 type ResponseData struct {
