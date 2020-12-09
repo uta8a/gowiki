@@ -1,0 +1,14 @@
+FROM ubuntu:20.04
+
+ENV DEBIAN_FRONTEND noninteractive
+
+WORKDIR /work
+RUN apt-get update && apt-get upgrade -y
+RUN apt-get install -y curl gnupg2
+RUN curl -L https://github.com/golang-migrate/migrate/releases/download/v4.14.1/migrate.linux-amd64.tar.gz | tar xvz
+RUN mv ./migrate.linux-amd64 /usr/bin/migrate
+RUN chmod +x /usr/bin/migrate
+RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ bionic-pgdg main' > /etc/apt/sources.list.d/pgdg.list
+RUN curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
+RUN apt-get update
+RUN apt-get install -y postgresql-client-12
