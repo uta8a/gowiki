@@ -12,6 +12,25 @@
 - https://qiita.com/hiro9/items/e6e41ec822a7077c3568
   - pgweb使うと手軽そう
 
+# DB migration
+- https://dev.classmethod.jp/articles/db-migrate-with-golang-migrate/
+  - これを見た
+```
+# まずdocker-compose upでdbコンテナを立ち上げておく
+
+# これをしたいがうまくいかない
+sudo docker-compose run --rm migration exec migrate create -ext sql -dir /work/migration -seq create_users_table
+
+# 代案
+sudo docker-compose -f deployments/docker-compose.dev.yml run --rm migration /bin/bash  # shellに入る
+## migrationコンテナでmigration
+migrate create -ext sql -dir migration -seq <sql_file_name> # sqlファイルを作成
+
+export POSTGRESQL_URL='postgres://suburi:password@db:5432/suburi_db?sslmode=disable'
+migrate -database ${POSTGRESQL_URL} -path migrations up # upでmigration、downで切り戻し
+```
+- volumeでchownしなきゃ問題もあるが動く
+
 # session
 - https://astaxie.gitbooks.io/build-web-application-with-golang/content/ja/06.0.html
   - sessionを標準パッケージで実装している。
@@ -45,3 +64,6 @@
   - http.HandleFuncと、NewServeMuxしてHandleFuncの違いが分かってない。
   - driver localのdocker volumeがホストのどこにファイルが作成されるのか分かってない。
   - ようやくEnvでDB接続URLつくるとこまできた。
+  - DB接続、migrationをしないとなあ
+  - これ、rails migrateに対応するような、migration toolをAppの外でInitとして使う必要があるのでは？
+  - おそらく、compose upしてdbを立ち上げて、そのdbに対してexec migrateをしてmigrationを行い、再度upして立ち上げる感じで後は開発という流れ...？
