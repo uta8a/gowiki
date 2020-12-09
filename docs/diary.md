@@ -71,3 +71,4 @@ migrate -database ${POSTGRESQL_URL} -path migrations up # upでmigration、down�
   - 次はsessionとlogin/logoutを実装する。なんかここ乗り切ればあとはdirectory構造の保持くらいしか鬼門がないし、一気に実装して行ける気がする(フラグ)
   - 通話用に話すネタ帳みたいなのをwikiにおいておくと楽しそう。
   - ここらへんでファイル分割してテスト書きたいな。やります。
+  - importは ``github.com/<org>/<repo>/internal`` みたいな絶対パスで書きそう。``_test.go``は同じ階層に置くみたい。
