@@ -50,6 +50,9 @@ func HealthHandler(w http.ResponseWriter, r *http.Request) {
 func RegisterRoutes(db *sql.DB) {
 	_ = NewState(db)
 	http.HandleFunc("/healthcheck", HealthHandler)
+  // http.HandleFunc("/privatecheck", privateHandler)
+	// http.HandleFunc("/users", userHandler)
+	// http.HandleFunc("/login", loginHandler)
 }
 
 func main() {
@@ -64,14 +67,12 @@ func main() {
 	db, err := sql.Open("postgres", dburl) // return *sql.DB, error
 	if err != nil {
 		log.Fatal("DB connection failed: ", err)
-	}
+  }
+  
+  // Routes
 	RegisterRoutes(db)
 
-	// http.HandleFunc("/healthcheck", HealthHandler)
-	// http.HandleFunc("/privatecheck", privateHandler)
-	// http.HandleFunc("/users", userHandler)
-	// http.HandleFunc("/login", loginHandler)
-
+  // Server start
 	err = http.ListenAndServe(":9000", nil)
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
