@@ -1,6 +1,13 @@
 version: '3'
 
 services:
+  migration:
+    build:
+      context: ../
+      dockerfile: build/builder/Dockerfile.migrate
+    volumes:
+      - ../configs/migration:/work/migration
+    tty: true
   db:
     image: postgres:12.5-alpine
     volumes:
@@ -14,11 +21,11 @@ services:
   server:
     build:
       context: ../
-      dockerfile: build/builder/Dockerfile
+      dockerfile: build/builder/Dockerfile.server
     volumes:
       - ../cmd/wiki:/go/src/wiki
     ports:
-      - "9000:9000"
+      - 9000:9000
     container_name: server
     environment:
       - POSTGRES_HOST=db
@@ -26,6 +33,7 @@ services:
       - POSTGRES_USER=suburi
       - POSTGRES_PASSWORD=password
       - POSTGRES_DB=suburi_db
+    restart: always
 volumes:
   db-data:
     driver: local
