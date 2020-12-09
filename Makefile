@@ -5,6 +5,6 @@ up:
 down:
 	sudo docker-compose -f ./deployments/docker-compose.dev.yml down
 fmt:
-	gofmt -w cmd/wiki/main.go
+	gofmt -w cmd/* internal/*
 migrate:
 	sudo docker-compose -f ./deployments/docker-compose.dev.yml run --rm migration /bin/bash 
