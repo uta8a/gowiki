@@ -22,11 +22,11 @@ func main() {
 	db, err := sql.Open("postgres", dburl) // return *sql.DB, error
 	if err != nil {
 		log.Fatal("DB Open failed: ", err)
-  }
-  err = db.Ping()
-  if err != nil {
-    log.Fatal("DB Ping failed: ", err)
-  }
+	}
+	// err = db.Ping()
+	// if err != nil {
+	// 	log.Fatal("DB Ping failed: ", err)
+	// }
 
 	// Routes
 	route.RegisterRoutes(db)
