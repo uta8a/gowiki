@@ -408,10 +408,23 @@ components:
   - login `/login` POST
   - logout `/login` DELETE
   - change user info `/users/<userid>` PUT
+- https://qiita.com/uenosy/items/ba9dbc70781bddc4a491
+  - RESTのステータスコードの指針
 
 # Error
 - https://tutuz-tech.hatenablog.com/entry/2020/03/26/193519
   - エラーハンドリング
+
+# signup
+```go
+func (state *state.State) signup(w http.ResponseWriter, r *http.Request) error {
+  // validation
+  // パスワード長とかチェックしてだめなら400 bad request
+  
+  // DB Set
+  // 
+}
+```
 
 # log
 - 2020/12/08
@@ -445,3 +458,15 @@ components:
   - cookieに変更。あとで書き換えるべきときが来たら書き換える。(Bearer Authorizationヘッダがいいのかな)
   - コメントを抜きにドキュメントをディレクトリ構造でmarkdownで履歴なしにダウンロードできる機能ほしいな。(gitlab wikiのgit pullするあれみたいなやつの、ただのzip版)
   - interfaceみたいなのよくわからんな。返り値の型とかになっているとうーんとなる。
+  - とりあえずすべて500を返そう。エラーハンドリングはhandler.goでできるので、そこでやる。
+  - handlerの内側では、mainで一個POST, GETとか振り分けたりする処理とミドルウェア相当の処理を書いて、そのファイル内で、postとかgetみたいな関数を書けばよさそう。表に出るのはmainのみなので、post, getはprivateにしてて大丈夫っぽい。
+  - signupでやること、DBにusername, passwordhashを登録して、Sessionを登録して返す
+  - errorを返してwrapperで統一して404, 500などを返すほうがきれいな気がする。途中でNotFound関数とか使うのちょっと気持ち悪い気がする。
+  - DBとセッションどっちが先？と思ったけどDBが先だな。DBが不具合のときSessionを先に発行するのはやばい。
+  - non-local methodはだめらしい。dbをstateとしてstate.hoge()のhogeをルート別に書きたいから別ファイルに分けたいけどこれは無理らしい。type aliasみたいなやつやると別の型になってしまう。ここでinterfaceを使うのかなあ。
+  - interfaceはプロトタイプ宣言みたいなもんか？これを大量に宣言しておいて、それを実装した実体を他のファイルに書くという解決策を思いついた。うまくいくのかな。→いやプロトタイプ宣言じゃないなこれ
+  - structへの具体実装を行ったメソッドを、interfaceにより別ファイルで埋め込めるという話かな？こうなると具体的な実装は常に末端側になるので具体的なやつを毎回末端に書いていかないといけない。困った。
+  - exampleを見たら、state.handlerではなく、handler(db, ...)という形になっていた。つらい！Stateのメソッドを生やすかんじではないのか〜
+  - function返す形のfunctionって極力書かないほうがいいのかなと思ったけどかいているな...
+  - route -> handler -> 各handlerという流れを壊したくないなあ。
+  - http.HandleFuncに渡すときに``w,r``をしたくて、後は別にfunctionの引数にdb入っていても問題なさそう。
