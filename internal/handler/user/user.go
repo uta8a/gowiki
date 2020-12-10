@@ -37,16 +37,15 @@ func signup(db *sql.DB, w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		return err
 	}
-	log.Printf("validate ok %s %s", username, password)
+	log.Printf("validate ok: %s", username)
 	// username identity check
-	var existsName bool
+	var exists bool
 	query := fmt.Sprintf("SELECT EXISTS (SELECT username FROM users WHERE username = '%s')", username)
-	err = db.QueryRow(query).Scan(&existsName)
+	err = db.QueryRow(query).Scan(&exists)
 	if err != nil {
-		// if err != sql.ErrNoRows {
 		return err
 	}
-	if existsName {
+	if exists {
 		return fmt.Errorf("username %s already exists", username)
 	}
 	// hash
@@ -61,6 +60,7 @@ func signup(db *sql.DB, w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		return err
 	}
-	// Session
+  // Session
+  
 	return nil
 }
