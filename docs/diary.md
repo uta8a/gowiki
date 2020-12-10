@@ -470,7 +470,31 @@ default:
 	return false
 }
 ```
+- これは勝ち申したのでは
 
+```shell
+$ curl -X POST "http://localhost:9000/users" -H "accept: */*" -H "Content-Type: application/x-www-form-urlencoded" -d "username=ua8a&password=ppppppp" -v
+Note: Unnecessary use of -X or --request, POST is already inferred.
+*   Trying 127.0.0.1:9000...
+* TCP_NODELAY set
+* Connected to localhost (127.0.0.1) port 9000 (#0)
+> POST /users HTTP/1.1
+> Host: localhost:9000
+> User-Agent: curl/7.68.0
+> accept: */*
+> Content-Type: application/x-www-form-urlencoded
+> Content-Length: 30
+>
+* upload completely sent off: 30 out of 30 bytes
+* Mark bundle as not supporting multiuse
+< HTTP/1.1 200 OK
+< Set-Cookie: SESSIONID=3UG0OEcj_1pENQEbs07bpdQ-58XbUwSVTWVVLXBlX-o%3D; Path=/; Max-Age=3600; HttpOnly
+< Set-Cookie: SESSIONID=3UG0OEcj_1pENQEbs07bpdQ-58XbUwSVTWVVLXBlX-o=; Expires=Fri, 10 Dec 2021 22:24:11 GMT
+< Date: Thu, 10 Dec 2020 22:24:11 GMT
+< Content-Length: 0
+<
+* Connection #0 to host localhost left intact
+```
 
 # log
 - 2020/12/08
@@ -525,3 +549,4 @@ default:
   - ``import cycle not allowed`` うおーそれはそう
   - https://qiita.com/tenntenn/items/7c70e3451ac783999b4f
   - packageが呼ばれたときにinit関数が動くらしい。initは特別な予約後関数
+  - main.goからimportしたいけどこれは無理なので、やっぱりstateにsession持たないとだめっぽい→もたせた
