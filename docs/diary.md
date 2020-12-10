@@ -214,6 +214,7 @@ for _, cookie := range r.Cookies() {
 - Session管理
 
 ```go
+// session managerを定義する
 type Manager struct {
   cookieName string
   lock sync.Mutex
@@ -231,10 +232,15 @@ func NewManager(provideName, cookieName string, maxlifetime int64) (*Manager, er
 
 var globalSessions *session.Manager
 
+// NewManagerで宣言したglobalSessionsを初期化。
+// provides(map (string : Provider))を必要とする
 func init() {
   globalSessions, _ = NewManager("memory", "gosessionid", 3600)
 }
 
+// interfaceは満たすべき制約
+// Providerの方が低いレイヤ
+// これは別にmemory側や、DB sessionなどいろいろな方法で定義
 type Provider interface {
   SessionInit(sid string) (Session, error)
   SessionRead(sid string) (Session, error)
@@ -249,8 +255,13 @@ type Session interface {
   SessionID() string
 }
 
+// globalにProviderのmapを持って初期化
+// key: string, value: Provider
 var provides = make(map[string]Provider)
 
+// memory initするときに使う。
+// 名前と、Providerをprovides(Providerがvalueのmap)に格納
+// 同じ名前で登録しようとするとパニックになる
 func Register(name string, provider Provider) {
   if provider == nil {
     panic("session: Register provide is nil")
@@ -261,6 +272,9 @@ func Register(name string, provider Provider) {
   provides[name] = provider
 }
 
+// URLSafeな形にエンコードする。
+// ReadFullはrand.Readerをbに読み込む。crypto/randを使いそう。
+// これはランダムな32byteのバイト列を生成し、base64encodeして返す、session生成器。
 func (manager *Manager) sessionId() string {
   b := make([]byte, 32)
   if _, err := io.ReadFull(rand.Reader, b); err != nil {
@@ -269,6 +283,10 @@ func (manager *Manager) sessionId() string {
   return base64.URLEncoding.EncodeToString(b)
 }
 
+// SESSIONIDがあってvalueが入っているならReadしてsessionに情報を代入する。
+// つまり、存在しないvalueを指定すると、sidに存在しない値が入りSessionsReadで新規に作成されそう。この実装はちょっとまずいかもしれない。(validationがほしい)
+// SessionReadの動きがおかしいのかな？Sessionは払い出すもので検索時に新規作成しちゃうのは違うような
+// 今回は下のLoginのように、usernameをCookieにセットする形なので、新規作成しているのかも？
 func (manager *Manager) SessionStart(w http.ResponseWriter, r *http.Request) (session Session) {
   manager.lock.Lock()
   defer manager.lock.Unlock()
@@ -285,6 +303,11 @@ func (manager *Manager) SessionStart(w http.ResponseWriter, r *http.Request) (se
   return
 }
 
+// これはテンプレート返す直接的な関数
+// MethodはPOSTじゃないかなと思ったけど空のFormのGETを投げるときもあるらしい。
+// https://developer.mozilla.org/ja/docs/Learn/Forms/Sending_and_retrieving_form_data
+// つまり、GETは既存のusernameを渡してくれという流れっぽい。
+// elseと書いてあるが、実質POSTでusernameを投げたときに対応する。
 func login(w http.ResponseWriter, r *http.Request) {
   sess := globalSessions.SessionStart(w, r)
   r.ParseForm()
@@ -298,6 +321,31 @@ func login(w http.ResponseWriter, r *http.Request) {
   }
 }
 
+// example of Session.Get/Set/(Delete)
+// 時間をおいてアクセスするとセッションが破棄される
+func count(w http.ResponseWriter, r *http.Request) {
+  sess := globalSessions.SessionStart(w, r)
+  createtime := sess.Get("createtime")
+  if createtime == nil {
+    sess.Set("createtime", time.Now().Unix())
+  } else if (createtime.(int64) + 360) < (time.Now().Unix()) {
+    globalSessions.SessionDestroy(w, r)
+    sess = globalSessions.SessionStart(w, r)
+  }
+  ct := sess.Get("countnum")
+  if ct == nil {
+    sess.Set("countnum", 1)
+  } else {
+    sess.Get("countnum", (ct.(int) + 1))
+  }
+  t, _ := template.ParseFiles("count.gtpl")
+  w.Header().Set("Content-Type", "text/html")
+  t.Execute(w, sess.Get("countnum"))
+}
+
+// logout時の操作
+// https://developer.mozilla.org/ja/docs/Web/HTTP/Headers/Set-Cookie
+// (MaxAgeについて) ゼロまたは負の数値の場合は、クッキーは直ちに期限切れになります。
 func (manager *Manager) SessionDestroy(w http.ResponseWriter, r *http.Request) {
   cookie, err := r.Cookie(manager.cookieName)
   if err != nil || cookie.Value == "" {
@@ -312,10 +360,14 @@ func (manager *Manager) SessionDestroy(w http.ResponseWriter, r *http.Request) {
   }
 }
 
+// goって確か並行処理だったような？分からないが、lockがかからない限り、裏でいい感じにGCを回すということだろう
 func init() {
   go globalSessions.GC()
 }
 
+// GCの中身。
+// これは個々のsessionに対してではなく、globalに対して行われるのか？
+// 1時間と設定したら1時間ごとにglobalで破棄が発生するという理解でいいのかな
 func (manager *Manager) GC() {
   manager.lock.Lock()
   defer manager.lock.Unlock()
@@ -390,3 +442,6 @@ components:
   - テストまだだけどファイル分割は完了した。
   - sessionをやる。
   - 構造体って宣言するとき初期化が部分的でも大丈夫なのかな
+  - cookieに変更。あとで書き換えるべきときが来たら書き換える。(Bearer Authorizationヘッダがいいのかな)
+  - コメントを抜きにドキュメントをディレクトリ構造でmarkdownで履歴なしにダウンロードできる機能ほしいな。(gitlab wikiのgit pullするあれみたいなやつの、ただのzip版)
+  - interfaceみたいなのよくわからんな。返り値の型とかになっているとうーんとなる。
