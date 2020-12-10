@@ -441,6 +441,7 @@ func signup(db, w, r) error {
   DB.set()
   // Session start
   // SessionStorageに登録して返却
+  // Session.Set, Set-Cookie
   Session.Start()
   Write(w, Session.Get())
 }
@@ -519,3 +520,8 @@ default:
   - dbについて https://golang.org/pkg/database/sql/
   - Sessionに差し掛かったけどDBPingが失敗するな、なんでだろう
   - errorlogを直接返しているのをやめたい。
+- 2020/12/11
+  - globalにsessionを宣言しているのをやめたい。
+  - ``import cycle not allowed`` うおーそれはそう
+  - https://qiita.com/tenntenn/items/7c70e3451ac783999b4f
+  - packageが呼ばれたときにinit関数が動くらしい。initは特別な予約後関数
