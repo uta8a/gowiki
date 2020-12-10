@@ -2,11 +2,11 @@ package user
 
 import (
 	// "encoding/json"
-	// "fmt"
 	"database/sql"
+	"fmt"
 	"github.com/suburi-dev/gowiki/internal/auth"
-  "net/http"
-  "golang.org/x/crypto/bcrypt"
+	"golang.org/x/crypto/bcrypt"
+	"net/http"
 )
 
 func New(db *sql.DB, w http.ResponseWriter, r *http.Request) error {
@@ -35,30 +35,30 @@ func signup(db *sql.DB, w http.ResponseWriter, r *http.Request) error {
 	err = auth.Validate(username, password)
 	if err != nil {
 		return err
-  }
-  // username identity check
-  var exists bool
-  query := fmt.Sprintf("SELECT EXISTS (SELECT username FROM users WHERE username = %s)", username)
-  err = db.QueryRow(query).Scan(&exists)
-  if err != nil {
-    return err
-  }
-  if exists {
-    return fmt.Errorf("username %s already exists", username)
-  }
-  // hash
-  hashedBytes, err := bcrypt.GenerateFromPassword([]byte(password), 10)
-  if err != nil {
-    return err
-  }
-  hashed := string(hashedBytes)
-  // db insert
-  query = fmt.Sprintf("INSERT INTO users(username, password_hash) VALUES($1,$2)", username, hashed)
-  _, err = db.Exec(query)
-  if err != nil {
-    return err
-  }
-  // Session
+	}
+	// username identity check
+	var exists bool
+	query := fmt.Sprintf("SELECT EXISTS (SELECT username FROM users WHERE username = %s)", username)
+	err = db.QueryRow(query).Scan(&exists)
+	if err != nil {
+		return err
+	}
+	if exists {
+		return fmt.Errorf("username %s already exists", username)
+	}
+	// hash
+	hashedBytes, err := bcrypt.GenerateFromPassword([]byte(password), 10)
+	if err != nil {
+		return err
+	}
+	hashed := string(hashedBytes)
+	// db insert
+	query = fmt.Sprintf("INSERT INTO users(username, password_hash) VALUES($1,$2)", username, hashed)
+	_, err = db.Exec(query)
+	if err != nil {
+		return err
+	}
+	// Session
 
-  return nil
+	return nil
 }
