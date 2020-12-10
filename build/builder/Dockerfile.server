@@ -3,6 +3,7 @@ FROM golang:1.15
 WORKDIR /go/src/github.com/suburi-dev/gowiki/cmd/gowiki/
 
 RUN go get github.com/lib/pq
+RUN go get -u golang.org/x/crypto/bcrypt
 
 RUN go get github.com/pilu/fresh
 COPY cmd/gowiki/ /go/src/github.com/suburi-dev/gowiki/cmd/gowiki/
