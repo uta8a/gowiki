@@ -1,3 +1,8 @@
+# しばり
+- 標準を使う
+- lib/pqのドライバを使う
+- 
+
 # Swagger
 - https://girigiribauer.com/tech/20190318/
   - これ詳しいし、筋がよさそう
@@ -417,14 +422,50 @@ components:
 
 # signup
 ```go
-func (state *state.State) signup(w http.ResponseWriter, r *http.Request) error {
+func signup(db, w, r) error {
   // validation
-  // パスワード長とかチェックしてだめなら400 bad request
-  
+  // regex
+  // - username, パスワード長チェックしてだめなら400 bad request
+  // username already registered?
+  // - DBに接続し、すでに名前かぶってないかチェック
+  validate()
+  // hasher
+  hash()
   // DB Set
-  // 
+  // insert
+  // regex時点でSQLiの危険性を弾くのでここでは普通にやる
+  DB.set()
+  // Session start
+  // SessionStorageに登録して返却
+  Session.Start()
+  Write(w, Session.Get())
 }
 ```
+- https://pkg.go.dev/golang.org/x/crypto
+  - argon2もあるので後で考えたい。とりあえずbcrypt
+- https://www.irohabook.com/go-parseform
+  - Formからやるときのつまづきポイント
+- https://stackoverflow.com/questions/25837241/password-validation-with-regexp
+  - validationは自力っぽい。Regexはライブラリインストールしちゃうので使わず行こう。
+```go
+switch {
+case unicode.IsUpper(char):
+	upp = true
+	tot++
+case unicode.IsLower(char):
+	low = true
+	tot++
+case unicode.IsNumber(char):
+	num = true
+	tot++
+case unicode.IsPunct(char) || unicode.IsSymbol(char):
+	sym = true
+	tot++
+default:
+	return false
+}
+```
+
 
 # log
 - 2020/12/08
@@ -470,3 +511,5 @@ func (state *state.State) signup(w http.ResponseWriter, r *http.Request) error {
   - function返す形のfunctionって極力書かないほうがいいのかなと思ったけどかいているな...
   - route -> handler -> 各handlerという流れを壊したくないなあ。
   - http.HandleFuncに渡すときに``w,r``をしたくて、後は別にfunctionの引数にdb入っていても問題なさそう。
+  - とりあえずsalt抜きのパスワードハッシュをしていく(ひどいがまぁ登録するユーザおらんし大丈夫やろ)
+  - dbについて https://golang.org/pkg/database/sql/
