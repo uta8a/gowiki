@@ -149,6 +149,205 @@ func init() {
     session.Register("memory", pder)
 }
 ```
+- sessionストレージというやつらしい。
+- メモリ中に保持するので、再起動すると全部消える。
+
+```go
+struct SessionStore
+SessionStore.Set
+SessionStore.Get
+SessionStore.Delete
+SessionStore.SessionID
+
+struct Provider
+Provider.SessionInit
+Provider.SessionRead
+Provider.SessionDestroy
+Provider.SessionGC
+Provider.SessionUpdate
+
+init()
+```
+
+- SessionStoreはkey-value storeと考えて良い。
+- 上のStoreで使われている4つの関数をサポートするためにProviderが存在していて、Init, GC, UpdateのときにMutex Lockをかけている。
+- これらはメモリを使う想定だけど、それぞれの関数の中身を差し替えると(たとえばDBセッションなど)動くらしい。
+- Cookie
+
+```go
+// Cookie使い方
+http.SetCookie(w ResponseWriter, cookie *Cookie)
+
+/* 
+// Cookieの構造
+type Cookie struct {
+  Name string
+  Value string
+  Path string
+  Domain string
+  Expires time.Time
+  RawExpires string
+
+  MaxAge int
+  Secure bool
+  HttpOnly bool
+  Raw string
+  Unparsed []string
+}
+*/
+
+// Set 実際に期限を設定するとき
+expiration := time.Now()
+expiration = expiration.AddDate(1, 0, 0)
+cookie := http.Cookie(Name: "username", Value: "uta8a", Expires: expiration)
+http.SetCookie(w, &cookie)
+
+// Get cookieからデータ取り出すとき
+cookie, _ := r.Cookie("username")
+fmt.Fprint(w, cookie)
+
+for _, cookie := range r.Cookies() {
+  fmt.Fprint(w, cookie.Name)
+}
+```
+
+- Session管理
+
+```go
+type Manager struct {
+  cookieName string
+  lock sync.Mutex
+  provider Provider
+  maxlifetime int64
+}
+
+func NewManager(provideName, cookieName string, maxlifetime int64) (*Manager, error) {
+  provider, ok := provides[provideName]
+  if !ok {
+    return nil, fmt.Errorf("session: unknown provide %q (forgotten import ?)", provideName)
+  }
+  return &Manager{provider: provider, cookieName: cookieName, maxlifetime: maxlifetime}, nil
+}
+
+var globalSessions *session.Manager
+
+func init() {
+  globalSessions, _ = NewManager("memory", "gosessionid", 3600)
+}
+
+type Provider interface {
+  SessionInit(sid string) (Session, error)
+  SessionRead(sid string) (Session, error)
+  SessionDestroy(sid string) error
+  SessionGC(maxlifeTime int64)
+}
+
+type Session interface {
+  Set(key, value interface{}) error
+  Get(key interface{}) interface{}
+  Delete(key interface{}) error
+  SessionID() string
+}
+
+var provides = make(map[string]Provider)
+
+func Register(name string, provider Provider) {
+  if provider == nil {
+    panic("session: Register provide is nil")
+  }
+  if _, dup := provides[name]; dup {
+    panic("session: Register called twice for provide " + name)
+  }
+  provides[name] = provider
+}
+
+func (manager *Manager) sessionId() string {
+  b := make([]byte, 32)
+  if _, err := io.ReadFull(rand.Reader, b); err != nil {
+    return ""
+  }
+  return base64.URLEncoding.EncodeToString(b)
+}
+
+func (manager *Manager) SessionStart(w http.ResponseWriter, r *http.Request) (session Session) {
+  manager.lock.Lock()
+  defer manager.lock.Unlock()
+  cookie, err := r.Cookie(manager.cookieName)
+  if err != nil || cookie.Value == "" {
+    sid := manager.sessionId()
+    session, _ = manager.provider.SessionInit(sid)
+    cookie := http.Cookie{Name: manager.cookieName, Value: url.QueryEscape(sid), Path: "/", HttpOnly: true, MaxAge: int(manager.maxlifetime)}
+    http.SetCookie(w, &cookie)
+  } else {
+    sid, _ := url.QueryUnescape(cookie.Value)
+    session, _ = manager.provider.SessionRead(sid)
+  }
+  return
+}
+
+func login(w http.ResponseWriter, r *http.Request) {
+  sess := globalSessions.SessionStart(w, r)
+  r.ParseForm()
+  if r.Method == "GET" {
+    t, _ := template.ParseFiles("login.gtpl")
+    w.Header().Set("Content-Type", "text/html")
+    t.Execute(w, sess.Get("username"))
+  } else {
+    sess.Set("username". r.Form["username"])
+    http.Redirect(w, r, "/", 302)
+  }
+}
+
+func (manager *Manager) SessionDestroy(w http.ResponseWriter, r *http.Request) {
+  cookie, err := r.Cookie(manager.cookieName)
+  if err != nil || cookie.Value == "" {
+    return
+  } else {
+    manager.lock.Lock()
+    defer manager.lock.Unlock()
+    manager.provider.SessionDestroy(cookie.Value)
+    expiration := time.Now()
+    cookie := http.Cookie{Name: manager.cookieName, Path: "/", HttpOnly: true. Expires: expiration, MaxAge: -1}
+    http.SetCookie(w, &cookie)
+  }
+}
+
+func init() {
+  go globalSessions.GC()
+}
+
+func (manager *Manager) GC() {
+  manager.lock.Lock()
+  defer manager.lock.Unlock()
+  manager.provider.SessionGC(manager.maxlifetime)
+  time.AfterFunc(time.Duration(manager.maxlifetime), func() {manager.GC()})
+}
+```
+
+
+# Cookie, Bearer
+- Bearerの例。
+
+```yaml
+components:
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+      description: 'credential token for API'
+```
+
+- Cookieの例。
+- https://swagger.io/docs/specification/authentication/cookie-authentication/
+
+```yaml
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: SESSIONID
+```
 
 # REST
 - https://nec-baas.github.io/baas-manual/latest/developer/ja/rest-ref/user/register.html
@@ -187,3 +386,7 @@ func init() {
   - 通話用に話すネタ帳みたいなのをwikiにおいておくと楽しそう。
   - ここらへんでファイル分割してテスト書きたいな。やります。
   - importは ``github.com/<org>/<repo>/internal`` みたいな絶対パスで書きそう。``_test.go``は同じ階層に置くみたい。
+- 2020/12/10
+  - テストまだだけどファイル分割は完了した。
+  - sessionをやる。
+  - 構造体って宣言するとき初期化が部分的でも大丈夫なのかな
