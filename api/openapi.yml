@@ -21,7 +21,7 @@ paths:
     get:
       responses:
         '200':
-          description: 'Auth OK, this is private'
+          description: 'Auth OK, this is private # TODO'
       security:
         - cookieAuth: []
   '/users':
@@ -51,12 +51,12 @@ paths:
     post:
       responses:
         '200':
-          description: 'login'
+          description: 'login # TODO'
       security: []
     delete:
       responses:
         '200':
-          description: 'logout'
+          description: 'logout # TODO'
       security: []
 
 components:
