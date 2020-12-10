@@ -16,27 +16,31 @@ paths:
           description: 'OK'
         default:
           $ref: '#/components/responses/UnexpectedError'
+      security: []
   '/privatecheck':
     get:
       responses:
         '200':
           description: 'Auth OK, this is private'
       security:
-        - Bearer: []
+        - cookieAuth: []
   '/users':
     post:
       responses:
         '200':
           description: 'signup'
+      security: []
   '/login':
     post:
       responses:
         '200':
           description: 'login'
+      security: []
     delete:
       responses:
         '200':
           description: 'logout'
+      security: []
 
 components:
   schemas:
@@ -67,7 +71,7 @@ components:
           schema:
             $ref: '#/components/schemas/Error'
   securitySchemes:
-    Bearer:
-      type: http
-      scheme: bearer
-      description: 'credential token for API'
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: SESSIONID
