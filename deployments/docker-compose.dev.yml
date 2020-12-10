@@ -30,7 +30,7 @@ services:
     container_name: server
     environment:
       - POSTGRES_HOST=db
-      - POSTGRES_PORT=15432
+      - POSTGRES_PORT=5432
       - POSTGRES_USER=suburi
       - POSTGRES_PASSWORD=password
       - POSTGRES_DB=suburi_db
