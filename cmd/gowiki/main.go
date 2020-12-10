@@ -21,8 +21,12 @@ func main() {
 	log.Println("DB URL: ", dburl)
 	db, err := sql.Open("postgres", dburl) // return *sql.DB, error
 	if err != nil {
-		log.Fatal("DB connection failed: ", err)
-	}
+		log.Fatal("DB Open failed: ", err)
+  }
+  err = db.Ping()
+  if err != nil {
+    log.Fatal("DB Ping failed: ", err)
+  }
 
 	// Routes
 	route.RegisterRoutes(db)
