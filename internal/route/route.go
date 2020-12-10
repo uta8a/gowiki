@@ -2,7 +2,7 @@ package route
 
 import (
 	"database/sql"
-  "github.com/suburi-dev/gowiki/internal/handler"
+	"github.com/suburi-dev/gowiki/internal/handler"
 	"net/http"
 )
 
@@ -29,7 +29,7 @@ type HandlerStateFunc func(db *sql.DB, w http.ResponseWriter, r *http.Request)
 // convert f(db, w, r) -> db.f(w, r)
 // non-local method is not allowed, so use f(db, w, r)
 func (state *State) gen(handler HandlerStateFunc) http.HandlerFunc {
-  return func(w http.ResponseWriter, r *http.Request) {
-    handler(state.DB, w, r)
-  }
+	return func(w http.ResponseWriter, r *http.Request) {
+		handler(state.DB, w, r)
+	}
 }
