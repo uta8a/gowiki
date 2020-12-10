@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/suburi-dev/gowiki/internal/auth"
 	"golang.org/x/crypto/bcrypt"
+	"log"
 	"net/http"
 )
 
@@ -36,14 +37,16 @@ func signup(db *sql.DB, w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		return err
 	}
+	log.Printf("validate ok %s %s", username, password)
 	// username identity check
-	var exists bool
-	query := fmt.Sprintf("SELECT EXISTS (SELECT username FROM users WHERE username = %s)", username)
-	err = db.QueryRow(query).Scan(&exists)
+	var existsName bool
+	query := fmt.Sprintf("SELECT EXISTS (SELECT username FROM users WHERE username = '%s')", username)
+	err = db.QueryRow(query).Scan(&existsName)
 	if err != nil {
+		// if err != sql.ErrNoRows {
 		return err
 	}
-	if exists {
+	if existsName {
 		return fmt.Errorf("username %s already exists", username)
 	}
 	// hash
@@ -53,12 +56,11 @@ func signup(db *sql.DB, w http.ResponseWriter, r *http.Request) error {
 	}
 	hashed := string(hashedBytes)
 	// db insert
-	query = fmt.Sprintf("INSERT INTO users(username, password_hash) VALUES($1,$2)", username, hashed)
+	query = fmt.Sprintf("INSERT INTO users(username, password_hash) VALUES('%s','%s')", username, hashed)
 	_, err = db.Exec(query)
 	if err != nil {
 		return err
 	}
 	// Session
-
 	return nil
 }

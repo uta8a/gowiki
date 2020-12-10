@@ -13,7 +13,7 @@ import (
 func HealthHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	err := health.New(db, w, r)
 	if err != nil {
-		http.Error(w, fmt.Sprintf("HealthHandler failed: %w", err), http.StatusInternalServerError)
+		http.Error(w, fmt.Sprintf("HealthHandler failed: %s", err.Error()), http.StatusInternalServerError)
 		return
 	}
 }
@@ -21,7 +21,7 @@ func HealthHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 func UserHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	err := user.New(db, w, r)
 	if err != nil {
-		http.Error(w, fmt.Sprintf("UserHandler failed: %w", err), http.StatusInternalServerError)
+		http.Error(w, fmt.Sprintf("UserHandler failed: %s", err.Error()), http.StatusInternalServerError)
 		return
 	}
 }
