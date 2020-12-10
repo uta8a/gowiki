@@ -1,0 +1,6 @@
+root = "/go/src/github.com/suburi-dev/gowiki"
+tmp_dir = "cmd/gowiki/tmp"
+
+[build]
+cmd = "go build -o /tmp/main /go/src/github.com/suburi-dev/gowiki/cmd/gowiki"
+bin = "/tmp/main"
