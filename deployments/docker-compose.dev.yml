@@ -23,7 +23,8 @@ services:
       context: ../
       dockerfile: build/builder/Dockerfile.server
     volumes:
-      - ../cmd/wiki:/go/src/wiki
+      - ../cmd/gowiki:/go/src/github.com/suburi-dev/gowiki/cmd/gowiki
+      - ../internal:/go/src/github.com/suburi-dev/gowiki/internal
     ports:
       - 9000:9000
     container_name: server
