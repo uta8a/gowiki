@@ -15,8 +15,8 @@ import (
 var globalSessions *session.Manager
 
 func init() {
-  globalSessions, _ = session.NewManager("memory", "SESSIONID", 3600)
-  go globalSessions.GC()
+	globalSessions, _ = session.NewManager("memory", "SESSIONID", 3600)
+	go globalSessions.GC()
 }
 
 func main() {
@@ -37,8 +37,8 @@ func main() {
 		log.Fatal("DB Ping failed: ", err)
 	}
 
-  // session init
-  // package init(), so function already called
+	// session init
+	// package init(), so function already called
 
 	// Routes
 	route.RegisterRoutes(db, globalSessions)

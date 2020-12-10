@@ -2,15 +2,15 @@ package route
 
 import (
 	"database/sql"
-	"github.com/suburi-dev/gowiki/internal/session"
 	"github.com/suburi-dev/gowiki/internal/handler"
+	"github.com/suburi-dev/gowiki/internal/session"
 	"net/http"
 )
 
 // Application State
 type State struct {
-  DB *sql.DB
-  Session *session.Manager
+	DB      *sql.DB
+	Session *session.Manager
 }
 
 func NewState(db *sql.DB, gs *session.Manager) *State {

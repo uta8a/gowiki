@@ -4,8 +4,8 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/suburi-dev/gowiki/internal/handler/health"
-	"github.com/suburi-dev/gowiki/internal/session"
 	"github.com/suburi-dev/gowiki/internal/handler/user"
+	"github.com/suburi-dev/gowiki/internal/session"
 	"net/http"
 )
 

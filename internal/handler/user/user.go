@@ -1,22 +1,24 @@
 package user
 
 import (
-	"encoding/json"
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"github.com/suburi-dev/gowiki/internal/auth"
 	"github.com/suburi-dev/gowiki/internal/session"
 	"golang.org/x/crypto/bcrypt"
 	"log"
-  "net/http"
+	"net/http"
 
-  "time"
+	"time"
 )
+
 type ResponseData struct {
-	Status  int    `json:"status"`
-  Username string `json:"username"`
-  Message string `json:"message"`
+	Status   int    `json:"status"`
+	Username string `json:"username"`
+	Message  string `json:"message"`
 }
+
 func New(db *sql.DB, gs *session.Manager, w http.ResponseWriter, r *http.Request) error {
 	// POST
 	if r.Method == http.MethodPost {
@@ -67,15 +69,15 @@ func signup(db *sql.DB, gs *session.Manager, w http.ResponseWriter, r *http.Requ
 	if err != nil {
 		return err
 	}
-  // Session
-  sess := gs.SessionStart(w, r)
-  // cookie
-  expiration := time.Now()
-  expiration = expiration.AddDate(1, 0, 0)
-  cookie := http.Cookie{Name: "SESSIONID", Value: sess.SessionID(), Expires: expiration}
-  http.SetCookie(w, &cookie)
-  // response data
-	response := ResponseData{http.StatusOK, username, "signup ok"}
+	// Session
+	sess := gs.SessionStart(w, r)
+	// cookie
+	expiration := time.Now()
+	expiration = expiration.AddDate(1, 0, 0) // TODO fix
+	cookie := http.Cookie{Name: "SESSIONID", Value: sess.SessionID(), Expires: expiration}
+	http.SetCookie(w, &cookie)
+	// response data
+	response := ResponseData{http.StatusOK, username, "signup ok"} // TODO fix status code to 201
 	res, err := json.Marshal(response)
 	if err != nil {
 		return err
