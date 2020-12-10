@@ -27,7 +27,7 @@ paths:
   '/users':
     post:
       requestBody:
-        description: 'signup(username, password)'
+        description: 'signup(username, password) 2 <= username.len() <= 20, 2 <= password.len() <= 50, regex '
         required: true
         content:
           application/x-www-form-urlencoded:
@@ -36,8 +36,10 @@ paths:
               properties:
                 username:
                   type: string
+                  example: 'Bob'
                 password:
                   type: string
+                  example: 'pass'
               required:
                 - username
                 - password
