@@ -28,11 +28,15 @@ sudo docker-compose run --rm migration exec migrate create -ext sql -dir /work/m
 
 # 代案
 sudo docker-compose -f deployments/docker-compose.dev.yml run --rm migration /bin/bash  # shellに入る
+
+## 接続
+psql -h db -p 5432 -U suburi -d suburi_db
+
 ## migrationコンテナでmigration
 migrate create -ext sql -dir migration -seq <sql_file_name> # sqlファイルを作成
 
 export POSTGRESQL_URL='postgres://suburi:password@db:5432/suburi_db?sslmode=disable'
-migrate -database ${POSTGRESQL_URL} -path migrations up # upでmigration、downで切り戻し
+migrate -database ${POSTGRESQL_URL} -path migration up # upでmigration、downで切り戻し
 ```
 - volumeでchownしなきゃ問題もあるが動く
 
@@ -341,7 +345,7 @@ func count(w http.ResponseWriter, r *http.Request) {
   if ct == nil {
     sess.Set("countnum", 1)
   } else {
-    sess.Get("countnum", (ct.(int) + 1))
+    sess.Set("countnum", (ct.(int) + 1))
   }
   t, _ := template.ParseFiles("count.gtpl")
   w.Header().Set("Content-Type", "text/html")
@@ -513,3 +517,5 @@ default:
   - http.HandleFuncに渡すときに``w,r``をしたくて、後は別にfunctionの引数にdb入っていても問題なさそう。
   - とりあえずsalt抜きのパスワードハッシュをしていく(ひどいがまぁ登録するユーザおらんし大丈夫やろ)
   - dbについて https://golang.org/pkg/database/sql/
+  - Sessionに差し掛かったけどDBPingが失敗するな、なんでだろう
+  - errorlogを直接返しているのをやめたい。
