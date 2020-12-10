@@ -1,20 +1,27 @@
 package user
 
 import (
-	// "encoding/json"
+	"encoding/json"
 	"database/sql"
 	"fmt"
 	"github.com/suburi-dev/gowiki/internal/auth"
+	"github.com/suburi-dev/gowiki/internal/session"
 	"golang.org/x/crypto/bcrypt"
 	"log"
-	"net/http"
-)
+  "net/http"
 
-func New(db *sql.DB, w http.ResponseWriter, r *http.Request) error {
+  "time"
+)
+type ResponseData struct {
+	Status  int    `json:"status"`
+  Username string `json:"username"`
+  Message string `json:"message"`
+}
+func New(db *sql.DB, gs *session.Manager, w http.ResponseWriter, r *http.Request) error {
 	// POST
 	if r.Method == http.MethodPost {
 		// signup
-		err := signup(db, w, r)
+		err := signup(db, gs, w, r)
 		if err != nil {
 			return err
 		}
@@ -25,7 +32,7 @@ func New(db *sql.DB, w http.ResponseWriter, r *http.Request) error {
 }
 
 // signup
-func signup(db *sql.DB, w http.ResponseWriter, r *http.Request) error {
+func signup(db *sql.DB, gs *session.Manager, w http.ResponseWriter, r *http.Request) error {
 	err := r.ParseForm()
 	if err != nil {
 		return err
@@ -61,6 +68,20 @@ func signup(db *sql.DB, w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
   // Session
-  
+  sess := gs.SessionStart(w, r)
+  // cookie
+  expiration := time.Now()
+  expiration = expiration.AddDate(1, 0, 0)
+  cookie := http.Cookie{Name: "SESSIONID", Value: sess.SessionID(), Expires: expiration}
+  http.SetCookie(w, &cookie)
+  // response data
+	response := ResponseData{http.StatusOK, username, "signup ok"}
+	res, err := json.Marshal(response)
+	if err != nil {
+		return err
+	}
+	// response
+	w.Header().Set("Content-Type", "application/json")
+	fmt.Fprintf(w, string(res))
 	return nil
 }

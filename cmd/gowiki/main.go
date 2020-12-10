@@ -41,7 +41,7 @@ func main() {
   // package init(), so function already called
 
 	// Routes
-	route.RegisterRoutes(db)
+	route.RegisterRoutes(db, globalSessions)
 
 	// Server start
 	err = http.ListenAndServe(":9000", nil)
