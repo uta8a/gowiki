@@ -1,25 +1,20 @@
 package handler
 
 import (
-	"encoding/json"
+	// "encoding/json"
+	"database/sql"
 	"fmt"
+	"github.com/suburi-dev/gowiki/internal/handler/health"
 	"net/http"
 )
 
-type ResponseData struct {
-	Status  int    `json:"status"`
-	Message string `json:"message"`
-}
-
-func HealthHandler(w http.ResponseWriter, r *http.Request) {
-	// response data
-	response := ResponseData{http.StatusOK, "health check ok"}
-	res, err := json.Marshal(response)
+// wrapper 本体は /handler/health
+func HealthHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) {
+	err := health.New(db, w, r)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, fmt.Sprintf("HealthCheck failed: %w", err), http.StatusInternalServerError)
 		return
 	}
-	// response
-	w.Header().Set("Content-Type", "application/json")
-	fmt.Fprintf(w, string(res))
 }
+
+func UserHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) {}
