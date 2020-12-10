@@ -20,9 +20,9 @@ func NewState(db *sql.DB, gs *session.Manager) *State {
 func RegisterRoutes(db *sql.DB, gs *session.Manager) {
 	s := NewState(db, gs)
 	http.HandleFunc("/healthcheck", s.gen(handler.HealthHandler))
+	http.HandleFunc("/privatecheck", s.gen(handler.PrivateHandler))
 	http.HandleFunc("/users", s.gen(handler.UserHandler))
 	// http.HandleFunc("/login", LoginHandler)
-	// http.HandleFunc("/privatecheck", PrivateHandler)
 }
 
 // helper

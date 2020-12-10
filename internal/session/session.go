@@ -18,6 +18,7 @@ type Provider interface {
 	SessionRead(sid string) (Session, error)
 	SessionDestroy(sid string) error
 	SessionGC(maxlifeTime int64)
+	SessionExists(sid string) bool
 }
 
 type Session interface {
@@ -76,6 +77,20 @@ func (manager *Manager) SessionStart(w http.ResponseWriter, r *http.Request) (se
 		session, _ = manager.provider.SessionRead(sid)
 	}
 	return
+}
+
+func (manager *Manager) SessionCheck(w http.ResponseWriter, r *http.Request) bool {
+	cookie, err := r.Cookie(manager.cookieName)
+	if err != nil || cookie.Value == "" {
+		return false
+	} else {
+		sid, _ := url.QueryUnescape(cookie.Value)
+		ok := manager.provider.SessionExists(sid)
+		if !ok {
+			return false
+		}
+	}
+	return true
 }
 
 func (manager *Manager) SessionDestroy(w http.ResponseWriter, r *http.Request) {

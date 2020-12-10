@@ -9,8 +9,6 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	"log"
 	"net/http"
-
-	"time"
 )
 
 type ResponseData struct {
@@ -71,11 +69,12 @@ func signup(db *sql.DB, gs *session.Manager, w http.ResponseWriter, r *http.Requ
 	}
 	// Session
 	sess := gs.SessionStart(w, r)
+	sess.Set("username", username)
 	// cookie
-	expiration := time.Now()
-	expiration = expiration.AddDate(1, 0, 0) // TODO fix
-	cookie := http.Cookie{Name: "SESSIONID", Value: sess.SessionID(), Expires: expiration}
-	http.SetCookie(w, &cookie)
+	// expiration := time.Now()
+	// expiration = expiration.AddDate(1, 0, 0) // TODO fix
+	// cookie := http.Cookie{Name: "SESSIONID", Value: sess.SessionID(), Expires: expiration}
+	// http.SetCookie(w, &cookie)
 	// response data
 	response := ResponseData{http.StatusOK, username, "signup ok"} // TODO fix status code to 201
 	res, err := json.Marshal(response)

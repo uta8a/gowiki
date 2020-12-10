@@ -69,6 +69,11 @@ func (pder *Provider) SessionRead(sid string) (session.Session, error) {
 	return nil, nil
 }
 
+func (pder *Provider) SessionExists(sid string) bool {
+	_, ok := pder.sessions[sid]
+	return ok
+}
+
 func (pder *Provider) SessionDestroy(sid string) error {
 	if element, ok := pder.sessions[sid]; ok {
 		delete(pder.sessions, sid)
