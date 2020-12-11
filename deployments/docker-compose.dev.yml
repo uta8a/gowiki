@@ -35,6 +35,16 @@ services:
       - POSTGRES_PASSWORD=password
       - POSTGRES_DB=suburi_db
     restart: always
+  web:
+    build:
+      context: ../
+      dockerfile: build/builder/Dockerfile.web
+    volumes:
+      - ../web/pages:/work/pages
+    ports:
+      - 3000:3000
+    container_name: web
+    restart: always
 volumes:
   db-data:
     driver: local

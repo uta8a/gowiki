@@ -1,0 +1,12 @@
+FROM node:14.15.1-stretch-slim
+
+WORKDIR /work
+
+COPY web/.babelrc .babelrc
+COPY web/package*.json ./
+COPY web/server.js server.js
+RUN npm install
+
+COPY web/pages pages
+
+CMD ["npm", "run", "dev"]
