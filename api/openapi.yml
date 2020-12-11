@@ -5,7 +5,7 @@ info:
   version: '0.0.1'
 
 servers:
-  - url: 'http://localhost:9000/api/'
+  - url: 'http://localhost:3000/api/'
     description: 'API Server'
 
 paths:
@@ -51,6 +51,39 @@ paths:
         '200':
           description: 'logout # TODO'
       security: []
+  '/groups':
+    post:
+      requestBody:
+        description: 'postでgroup作成、deleteは後で作る(deleteでgroup削除)'
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Group'
+            example:
+              group_name: 'Bobs_group'
+              group_members:
+                - "Bob"
+                - "Nancy"
+
+      responses:
+        '200':
+          description: 'group作成'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - group_name
+                properties:
+                  group_name:
+                    type: string
+              example:
+                group_name: 'Bobs_group'
+      security:
+        - cookieAuth: []
+
+# TODO /groups/:group_name グループにmemberを追加/削除できるようにする
 
 components:
   schemas:
@@ -82,6 +115,19 @@ components:
           type: string
         password:
           type: string
+    Group:
+      description: 'group articleの公開範囲をグループ単位にする'
+      type: object
+      required:
+        - group_name
+      properties:
+        group_name:
+          type: string
+        group_members:
+          type: array
+          items:
+            type: string
+
   responses:
     OK:
       description: 'ok'
