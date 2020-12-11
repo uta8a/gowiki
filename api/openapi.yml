@@ -30,19 +30,12 @@ paths:
         description: 'signup(username, password) 2 <= username.len() <= 20, 2 <= password.len() <= 50, regex '
         required: true
         content:
-          application/x-www-form-urlencoded:
+          application/json:
             schema:
-              type: object
-              properties:
-                username:
-                  type: string
-                  example: 'Bob'
-                password:
-                  type: string
-                  example: 'pass'
-              required:
-                - username
-                - password
+              $ref: '#/components/schemas/User'
+            example:
+              username: 'Bob'
+              password: 'pass'
       responses:
         '200':
           description: 'signup'
@@ -78,6 +71,17 @@ components:
           minimum: 100
           maximum: 600
           example: 500
+    User:
+      description: 'username/password'
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+        password:
+          type: string
   responses:
     OK:
       description: 'ok'
