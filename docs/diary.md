@@ -496,6 +496,31 @@ Note: Unnecessary use of -X or --request, POST is already inferred.
 * Connection #0 to host localhost left intact
 ```
 
+- privatecheck動いた
+
+```shell
+$ curl -X GET "http://localhost:9000/privatecheck" -b "SESSIONID=foN035P1lvV3sI02c9pZA3ajVf2VMSQ6SDvx90-K3MU%3D"  -H "accept: */*" -v
+```
+
+# group
+- とりあえずユーザがグループを作れるようにする？
+- その前にフロントエンドがほしいか？わからねー
+
+# frontend
+- ここに置く
+  - Swaggerの定義書へのリンク(HTMLをstaticで置く)
+  - registerへのリンク
+  - loginへのリンク
+  - healthcheckへのリンク
+  - privatecheckへのリンク
+
+```
+npm install --save-dev @babel/core @babel/preset-env @babel/preset-react babel-loader \
+        webpack webpack-cli webpack-dev-server \
+        react react-dom \
+        react-router react-router-dom
+```
+
 # log
 - 2020/12/08
   - https://www.yoheim.net/blog.php?q=20170403
@@ -550,3 +575,19 @@ Note: Unnecessary use of -X or --request, POST is already inferred.
   - https://qiita.com/tenntenn/items/7c70e3451ac783999b4f
   - packageが呼ばれたときにinit関数が動くらしい。initは特別な予約後関数
   - main.goからimportしたいけどこれは無理なので、やっぱりstateにsession持たないとだめっぽい→もたせた
+  - やったーSession動いたっぽいと思ったらSESSIONIDだけ指定してあと何もしてなかったわ
+  - loggerを入れたい
+  - privatecheckが動いた。これで次のlogin/postArticle系に移れる。
+  - directory構造はとりあえず持たないで、articleにもたせてフロントでレンダリングするときにそれっぽくやるか。
+  - グループは実装しておきたい。その次にグループに属する記事を出してくるみたいな形かなあ。
+  - SSR,SSGとかあのへんようわからんな
+  - フロントエンドのcookie authがまるでわからん
+  - SSGはNodejsサーバがあるのか。じゃあSPA一択やんけ！何もわからんことが明らかになっていく
+  - https://qiita.com/TsutomuNakamura/items/34a7339a05bb5fd697f2
+  - これを見ながら頑張る
+  - 開発するときにMultiStage Buildでnginx reverse proxyだと、ビルドwatchができないので、どうしよう？
+  - ``"webpack-cli": "3.3.12",`` これ固定しないとエラーでる https://github.com/webpack/webpack-dev-server/issues/2029
+  - nginxでやるときには/api以外の/でないrouteをすべて/index.htmlに飛ばすやつをやる必要がある(nginx spa rewrite)
+  - どうやらNextjsのCustom Serverでhttp-proxy-middlewareを使えばいいらしい。Nextjsでよくね？
+  - Nextjsすごい使いやすい。
+  - APIはJSONで統一しておけばよかった。つらい。golang書き直し！
