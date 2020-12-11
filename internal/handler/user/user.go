@@ -8,7 +8,8 @@ import (
 	"github.com/suburi-dev/gowiki/internal/session"
 	"golang.org/x/crypto/bcrypt"
 	"log"
-	"net/http"
+  "net/http"
+  "io/ioutil"
 )
 
 type ResponseData struct {
@@ -16,7 +17,10 @@ type ResponseData struct {
 	Username string `json:"username"`
 	Message  string `json:"message"`
 }
-
+type User struct {
+  Username string `json:"username"`
+  Password string `json:"password"`
+}
 func New(db *sql.DB, gs *session.Manager, w http.ResponseWriter, r *http.Request) error {
 	// POST
 	if r.Method == http.MethodPost {
@@ -33,13 +37,17 @@ func New(db *sql.DB, gs *session.Manager, w http.ResponseWriter, r *http.Request
 
 // signup
 func signup(db *sql.DB, gs *session.Manager, w http.ResponseWriter, r *http.Request) error {
-	err := r.ParseForm()
-	if err != nil {
-		return err
-	}
+  body, err := ioutil.ReadAll(r.Body)
+  if err != nil {
+    return err
+  }
+  var u User
+  if err := json.Unmarshal(body, &u); err != nil {
+    return err
+  }
 	// validate
-	username := r.FormValue("username")
-	password := r.FormValue("password")
+	username := u.Username
+	password := u.Password
 	err = auth.Validate(username, password)
 	if err != nil {
 		return err
