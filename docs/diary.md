@@ -35,6 +35,7 @@ psql -h db -p 5432 -U suburi -d suburi_db
 ## migrationコンテナでmigration
 migrate create -ext sql -dir migration -seq <sql_file_name> # sqlファイルを作成
 
+## migration up
 export POSTGRESQL_URL='postgres://suburi:password@db:5432/suburi_db?sslmode=disable'
 migrate -database ${POSTGRESQL_URL} -path migration up # upでmigration、downで切り戻し
 ```
@@ -505,6 +506,28 @@ $ curl -X GET "http://localhost:9000/privatecheck" -b "SESSIONID=foN035P1lvV3sI0
 # group
 - とりあえずユーザがグループを作れるようにする？
 - その前にフロントエンドがほしいか？わからねー
+- front書いた。
+
+```text
+group_admins
+  id: serial
+  group_name: string # unique
+  group_admin: string # ここはひとり
+group_users
+  id: serial
+  group_name: string
+  group_user: string # ここが大量に入るイメージ
+articles
+  article_id: int serial # これは後でposts/:numberでやるとき使う
+  title: string
+  article_path: string # unique
+  group_name: group_name
+  body: string # Markdownのstring
+tags
+  tag_id: int serial
+  article_id: int
+  tag: string
+```
 
 # frontend
 - ここに置く
@@ -591,3 +614,5 @@ npm install --save-dev @babel/core @babel/preset-env @babel/preset-react babel-l
   - どうやらNextjsのCustom Serverでhttp-proxy-middlewareを使えばいいらしい。Nextjsでよくね？
   - Nextjsすごい使いやすい。
   - APIはJSONで統一しておけばよかった。つらい。golang書き直し！
+  - 書き直した。次はloginとか、goを書く段階に入ってきた気がする。articleの登録とかもできるようにしたい...
+  - グループを先に実装する
