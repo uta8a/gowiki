@@ -1,11 +1,11 @@
 openapi: '3.0.3'
 
 info:
-  title: 'Wiki RTA Go API'
+  title: 'gowiki API'
   version: '0.0.1'
 
 servers:
-  - url: 'http://localhost:3000/api/'
+  - url: 'http://localhost:9000/'
     description: 'API Server'
 
 paths:
