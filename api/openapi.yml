@@ -52,6 +52,22 @@ paths:
           description: 'logout # TODO'
       security: []
   '/groups':
+    get:
+      responses:
+        '200':
+          description: 'userの入っているgroupを返却する'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserGroups'
+              example:
+                user_groups:
+                  - 'suburi-dev'
+                  - 'public'
+                  - 'myPrivate'
+      security:
+        - cookieAuth: []
+
     post:
       requestBody:
         description: 'postでgroup作成、deleteは後で作る(deleteでgroup削除)'
@@ -127,7 +143,16 @@ components:
           type: array
           items:
             type: string
-
+    UserGroups:
+      description: 'ユーザが所属するグループ一覧'
+      type: object
+      required:
+        - user_groups
+      properties:
+        user_groups:
+          type: array
+          items:
+            type: string
   responses:
     OK:
       description: 'ok'
