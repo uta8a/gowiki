@@ -42,10 +42,30 @@ paths:
       security: []
   '/login':
     post:
+      requestBody:
+        description: 'login'
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+            example:
+              username: 'Bob'
+              password: 'pass'
       responses:
         '200':
-          description: 'login # TODO'
-      security: []
+          description: 'login success'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - username
+                properties:
+                  username:
+                    type: string
+              example:
+                username: 'Bob'
     delete:
       responses:
         '200':
