@@ -7,6 +7,7 @@ import (
 	"github.com/suburi-dev/gowiki/internal/handler/private"
 	"github.com/suburi-dev/gowiki/internal/handler/user"
 	"github.com/suburi-dev/gowiki/internal/handler/group"
+	"github.com/suburi-dev/gowiki/internal/handler/login"
 	"github.com/suburi-dev/gowiki/internal/session"
 	"net/http"
 )
@@ -43,6 +44,15 @@ func GroupHandler(db *sql.DB, gs *session.Manager, w http.ResponseWriter, r *htt
 	err := group.New(db, gs, w, r)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("GroupHandler failed: %s", err.Error()), http.StatusInternalServerError)
+		return
+	}
+}
+
+// wrapper 本体は /handler/login
+func LoginHandler(db *sql.DB, gs *session.Manager, w http.ResponseWriter, r *http.Request) {
+	err := login.New(db, gs, w, r)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("LoginHandler failed: %s", err.Error()), http.StatusInternalServerError)
 		return
 	}
 }

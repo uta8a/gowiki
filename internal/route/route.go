@@ -23,7 +23,7 @@ func RegisterRoutes(db *sql.DB, gs *session.Manager) {
 	http.HandleFunc("/privatecheck", s.gen(handler.PrivateHandler))
 	http.HandleFunc("/users", s.gen(handler.UserHandler))
 	http.HandleFunc("/groups", s.gen(handler.GroupHandler))
-	// http.HandleFunc("/login", LoginHandler)
+	http.HandleFunc("/login", s.gen(handler.LoginHandler))
 }
 
 // helper
