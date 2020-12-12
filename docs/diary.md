@@ -545,6 +545,54 @@ npm install --save-dev @babel/core @babel/preset-env @babel/preset-react babel-l
         react-router react-router-dom
 ```
 
+# net/http HandleFuncの挙動
+```shell
+$ curl -X GET "http://localhost:9000/articles" -H "accept: application/json"
+/articles simple path
+$ curl -X GET "http://localhost:9000/article" -H "accept: application/json"
+404 page not found
+$ curl -X GET "http://localhost:9000/articless" -H "accept: application/json"
+404 page not found
+$ curl -X GET "http://localhost:9000/articles/" -H "accept: application/json"
+/articles/:id ? variable path
+$ curl -X GET "http://localhost:9000/articles/a" -H "accept: application/json"
+/articles/:id ? variable path
+$ curl -X GET "http://localhost:9000/articles/age" -H "accept: application/json"
+/articles/:id ? variable path
+$ curl -X GET "http://localhost:9000/articles/article" -H "accept: application/json"
+/articles/:id ? variable path
+$ curl -X GET "http://localhost:9000/articles//" -H "accept: application/json"
+<a href="/articles/">Moved Permanently</a>.
+
+$ curl -X GET "http://localhost:9000/articles//a" -H "accept: application/json"
+<a href="/articles/a">Moved Permanently</a>.
+
+$ curl -X GET "http://localhost:9000/articles//a" -w -H "accept: application/json"
+<a href="/articles/a">Moved Permanently</a>.
+
+curl: (3) URL using bad/illegal format or missing URL
+-H-H$ curl -X GET -w "http://localhost:9000/articles//a" -H "accept: application/json"
+curl: no URL specified!
+curl: try 'curl --help' or 'curl --manual' for more information
+$ curl -X GET "http://localhost:9000/articles//a" -w -H "accept: application/json"
+<a href="/articles/a">Moved Permanently</a>.
+
+curl: (3) URL using bad/illegal format or missing URL
+-H-H$ curl -X GET "http://localhost:9000/articles//a" -w -H "accept: application/json" -L
+/articles/:id ? variable path
+curl: (3) URL using bad/illegal format or missing URL
+-H-H$
+```
+- variable pathを使用したいときは``/a/``でルーティングして、後ろを取得すればよさそう。
+
+# sqli
+- ``?``で防げるらしい。SQL側で守れるのか...
+- bind parameterというらしい。
+
+```go
+db.Query("...a = ?", parameters...)
+```
+
 # log
 - 2020/12/08
   - https://www.yoheim.net/blog.php?q=20170403
