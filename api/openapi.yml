@@ -173,13 +173,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Article'
+                type: object
+                properties:
+                  articles_id:
+                    type: integer
               example:
-                article_id: 1
-                title: '僕のメモ'
-                article_path: '/path/to/article'
-                group_name: 'Bobs_group'
-                body: 'CONTENT'
+                article_id: 2
       security:
         - cookieAuth: []
   '/articles/{articleId}':
@@ -241,16 +240,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Article'
+                type: object
+                properties:
+                  articles_id:
+                    type: integer
               example:
-                article_id: 1
-                title: '僕のメモ'
-                article_path: '/path/to/article'
-                tags:
-                  - 'memo'
-                  - 'tag_name'
-                group_name: 'Bobs_group'
-                body: 'CONTENT'
+                article_id: 2
       security:
         - cookieAuth: []
 components:
