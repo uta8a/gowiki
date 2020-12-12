@@ -126,9 +126,133 @@ paths:
                 group_name: 'Bobs_group'
       security:
         - cookieAuth: []
-
-# TODO /groups/:group_name グループにmemberを追加/削除できるようにする
-
+  '/articles':
+    get:
+      responses:
+        '200':
+          description: 'get all article user can see'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AllArticles'
+              example:
+                group_number: 2
+                groups:
+                  - group_name: 'Bobs_group'
+                    articles_id:
+                      - 1
+                      - 2
+                      - 3
+                  - group_name: 'Alices_group'
+                    articles_id:
+                      - 4
+                      - 5
+                      - 6
+      security:
+        - cookieAuth: []
+    post:
+      requestBody:
+        description: 'new article'
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ArticlePost'
+            example:
+              title: '僕のメモ'
+              article_path: '/path/to/article'
+              tags:
+                - 'memo'
+                - 'note'
+                - 'メモです'
+              group_name: 'Bobs_group'
+              body: 'CONTENT'
+      responses:
+        '200':
+          description: 'content update success'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Article'
+              example:
+                article_id: 1
+                title: '僕のメモ'
+                article_path: '/path/to/article'
+                group_name: 'Bobs_group'
+                body: 'CONTENT'
+      security:
+        - cookieAuth: []
+  '/articles/{articleId}':
+    get:
+      parameters:
+        - in: path
+          name: articleId
+          required: true
+          schema:
+            type: integer
+          description: 'article_id'
+          example:
+            articleId: 1
+      responses:
+        '200':
+          description: 'get article body'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Article'
+              example:
+                article_id: 1
+                title: '僕のメモ'
+                article_path: '/path/to/article'
+                tags:
+                  - 'memo'
+                  - 'tag_name'
+                group_name: 'Bobs_group'
+                body: 'CONTENT'
+      security:
+        - cookieAuth: []
+    post:
+      parameters:
+        - in: path
+          name: articleId
+          required: true
+          schema:
+            type: integer
+          description: 'article_id'
+      requestBody:
+        description: 'update article'
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ArticlePost'
+            example:
+              title: '僕のメモ'
+              article_path: '/path/to/article'
+              tags:
+                - 'memo'
+                - 'note'
+                - 'メモです'
+              group_name: 'Bobs_group'
+              body: 'CONTENT'
+      responses:
+        '200':
+          description: 'content update success'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Article'
+              example:
+                article_id: 1
+                title: '僕のメモ'
+                article_path: '/path/to/article'
+                tags:
+                  - 'memo'
+                  - 'tag_name'
+                group_name: 'Bobs_group'
+                body: 'CONTENT'
+      security:
+        - cookieAuth: []
 components:
   schemas:
     Error:
@@ -181,6 +305,73 @@ components:
           type: array
           items:
             type: string
+    Article:
+      description: '記事'
+      type: object
+      required:
+        - article_id
+        - title
+        - article_path
+        - tags
+        - group_name
+        - body
+      properties:
+        article_id:
+          type: integer
+        title:
+          type: string
+        article_path:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        group_name:
+          type: string
+        body:
+          type: string
+    ArticlePost:
+      description: 'no id article for post'
+      type: object
+      required:
+        - title
+        - article_path
+        - tags
+        - group_name
+        - body
+      properties:
+        title:
+          type: string
+        article_path:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        group_name:
+          type: string
+        body:
+          type: string
+    AllArticles:
+      description: 'All articles'
+      type: object
+      required:
+        - group_number
+        - groups
+      properties:
+        group_number:
+          type: integer
+        groups:
+          type: array
+          items:
+            type: object
+            properties:
+              group_name:
+                type: string
+              articles_id:
+                type: array
+                items:
+                  type: integer
   responses:
     OK:
       description: 'ok'
