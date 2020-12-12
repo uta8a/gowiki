@@ -8,6 +8,8 @@ import (
 	"github.com/suburi-dev/gowiki/internal/handler/user"
 	"github.com/suburi-dev/gowiki/internal/handler/group"
 	"github.com/suburi-dev/gowiki/internal/handler/login"
+	"github.com/suburi-dev/gowiki/internal/handler/article"
+	"github.com/suburi-dev/gowiki/internal/handler/articleid"
 	"github.com/suburi-dev/gowiki/internal/session"
 	"net/http"
 )
@@ -53,6 +55,22 @@ func LoginHandler(db *sql.DB, gs *session.Manager, w http.ResponseWriter, r *htt
 	err := login.New(db, gs, w, r)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("LoginHandler failed: %s", err.Error()), http.StatusInternalServerError)
+		return
+	}
+}
+
+func ArticleHandler(db *sql.DB, gs *session.Manager, w http.ResponseWriter, r *http.Request) {
+	err := article.New(db, gs, w, r)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("ArticleHandler failed: %s", err.Error()), http.StatusInternalServerError)
+		return
+	}
+}
+
+func ArticleIdHandler(db *sql.DB, gs *session.Manager, w http.ResponseWriter, r *http.Request) {
+	err := articleid.New(db, gs, w, r)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("ArticleIdHandler failed: %s", err.Error()), http.StatusInternalServerError)
 		return
 	}
 }
