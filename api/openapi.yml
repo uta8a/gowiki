@@ -60,16 +60,24 @@ paths:
               schema:
                 type: object
                 required:
+                  - status
                   - username
+                  - message
                 properties:
+                  status:
+                    type: integer
                   username:
                     type: string
+                  message:
+                    type: string
               example:
+                status: 200
                 username: 'Bob'
+                message: 'login ok'
     delete:
       responses:
         '200':
-          description: 'logout # TODO'
+          description: 'logout'
       security: []
   '/groups':
     get:
