@@ -1,7 +1,8 @@
 # しばり
 - 標準を使う
-- lib/pqのドライバを使う
-- 
+- その他
+  - lib/pqのドライバを使う
+  - crypto/mathを使う
 
 # Swagger
 - https://girigiribauer.com/tech/20190318/
@@ -616,3 +617,8 @@ npm install --save-dev @babel/core @babel/preset-env @babel/preset-react babel-l
   - APIはJSONで統一しておけばよかった。つらい。golang書き直し！
   - 書き直した。次はloginとか、goを書く段階に入ってきた気がする。articleの登録とかもできるようにしたい...
   - グループを先に実装する
+- 2020/12/12
+  - insert dbするときに、2回やるなら後続で失敗したときに前半のを巻き戻したい気持ちがある(トランザクション的な)
+  - groupがまぁ最低限動いた。ここらへんでlogin実装しておかないと破滅するな(すでに破滅している)
+  - 書き直す前提で書くとやばいことが分かった。でも学習段階では捨てる勢いで書くのも大事(いつまでたっても完成しないので)というのも分かった。
+  - まずopenapiを書いて、login.goを頑張る。これ終わったらarticleまわり作り込んで、フロントを雑に書いてmarkdownをレンダリングできるようにして完成や
