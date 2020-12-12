@@ -622,3 +622,4 @@ npm install --save-dev @babel/core @babel/preset-env @babel/preset-react babel-l
   - groupがまぁ最低限動いた。ここらへんでlogin実装しておかないと破滅するな(すでに破滅している)
   - 書き直す前提で書くとやばいことが分かった。でも学習段階では捨てる勢いで書くのも大事(いつまでたっても完成しないので)というのも分かった。
   - まずopenapiを書いて、login.goを頑張る。これ終わったらarticleまわり作り込んで、フロントを雑に書いてmarkdownをレンダリングできるようにして完成や
+  - openapiとlogin.goを書いた。articleまわりを作る。まずはopenapiから書く。
