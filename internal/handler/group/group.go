@@ -108,7 +108,7 @@ func registerGroup(db *sql.DB, gs *session.Manager, w http.ResponseWriter, r *ht
 		return err
 	}
 	groupname := req.GroupName
-	rawGroupMembers := req.GroupMembers
+  rawGroupMembers := req.GroupMembers
 	if _, ok = Find(rawGroupMembers, username); !ok {
 		rawGroupMembers = append(rawGroupMembers, username)
 	}
@@ -119,7 +119,9 @@ func registerGroup(db *sql.DB, gs *session.Manager, w http.ResponseWriter, r *ht
 	}
 
 	for i := range m {
-		groupMembers = append(groupMembers, i)
+    if i != "" {
+      groupMembers = append(groupMembers, i)
+    }
 	}
 	err = validateGroupName(groupname)
 	if err != nil {

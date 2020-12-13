@@ -22,7 +22,7 @@ const Login = () => {
         return r.json();
       })
       .then((data) => {
-        Router.push('/');
+        Router.push('/user');
       });
   }
   return (

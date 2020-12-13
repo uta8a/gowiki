@@ -6,6 +6,7 @@ import (
 	"github.com/suburi-dev/gowiki/internal/handler/article"
 	"github.com/suburi-dev/gowiki/internal/handler/articleid"
 	"github.com/suburi-dev/gowiki/internal/handler/group"
+	"github.com/suburi-dev/gowiki/internal/handler/groupname"
 	"github.com/suburi-dev/gowiki/internal/handler/health"
 	"github.com/suburi-dev/gowiki/internal/handler/login"
 	"github.com/suburi-dev/gowiki/internal/handler/private"
@@ -46,6 +47,14 @@ func GroupHandler(db *sql.DB, gs *session.Manager, w http.ResponseWriter, r *htt
 	err := group.New(db, gs, w, r)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("GroupHandler failed: %s", err.Error()), http.StatusInternalServerError)
+		return
+	}
+}
+
+func GroupNameHandler(db *sql.DB, gs *session.Manager, w http.ResponseWriter, r *http.Request) {
+	err := groupname.New(db, gs, w, r)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("GroupNameHandler failed: %s", err.Error()), http.StatusInternalServerError)
 		return
 	}
 }

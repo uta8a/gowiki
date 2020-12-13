@@ -1,35 +1,48 @@
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/router'
-import useSWR from 'swr'
+import React, {useState} from 'react';
+import Router from 'next/router';
 
-const fetcher = (url) => fetch(url).then((res) => res.json())
+const Login = () => {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
 
-const useMounted = () => {
-  const [mounted, setMounted] = useState(false)
-  useEffect(() => setMounted(true), [])
-  return mounted
-}
-
-export default function Index() {
-  const mounted = useMounted()
-  const router = useRouter()
-  const queryString = `/api/${Object.keys(router.query).join('')}`
-  const { data, error } = useSWR(() => (mounted ? queryString : null), fetcher)
-
-  if (error) return <div>Failed to load</div>
-  if (!data) return <div>Loading...</div>
-
+  function handleSubmit(e) {
+    e.preventDefault();
+    //call api
+    fetch('/api/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        'username': username,
+        'password': password,
+      }),
+    })
+      .then((r) => {
+        return r.json();
+      })
+      .then((data) => {
+        Router.push(`/user`);
+      });
+  }
   return (
-    <content>
-      <p>
-        {queryString} routed to https://swapi.co{queryString}
-      </p>
-      <p>
-        <a href="?people/2">Try</a>
-        &nbsp;
-        <a href="/">Reset</a>
-      </p>
-      <pre>{data ? JSON.stringify(data, null, 2) : 'Loading...'}</pre>
-    </content>
-  )
-}
+    <form onSubmit={handleSubmit}>
+      <p>ログイン</p>
+      <input
+        name="username"
+        type="text"
+        value={username}
+        onChange={(e) => setUsername(e.target.value)}
+      />
+      <input
+        name="password"
+        type="password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+      />
+      <input type="submit" value="Submit" />
+    </form>
+  );
+};
+
+export default Login;

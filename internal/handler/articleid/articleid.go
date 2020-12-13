@@ -59,7 +59,7 @@ func New(db *sql.DB, gs *session.Manager, w http.ResponseWriter, r *http.Request
 }
 
 func getParamFromURL(base string, u string) (int, error) {
-	rawParam := strings.TrimLeft(u, base)
+	rawParam := strings.TrimPrefix(u, base)
 	// db.articles_id is serial, 32 bit 1-index unsigned integer
 	param, err := strconv.ParseUint(rawParam, 10, 32)
 	if err != nil {

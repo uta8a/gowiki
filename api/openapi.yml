@@ -127,6 +127,41 @@ paths:
                 group_name: 'Bobs_group'
       security:
         - cookieAuth: []
+  '/groups/{groupId}':
+    post:
+      parameters:
+        - in: path
+          name: groupId
+          required: true
+          schema:
+            type: integer
+          description: 'group id'
+      requestBody:
+        description: 'update group member'
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Group'
+            example:
+              group_name: 'Bobs_group'
+              group_members:
+                - "Bob"
+                - "Nancy"
+      responses:
+        '200':
+          description: 'member update success'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  group_name:
+                    type: string
+              example:
+                group_name: 'Bobs_group'
+      security:
+        - cookieAuth: []
   '/articles':
     get:
       responses:
