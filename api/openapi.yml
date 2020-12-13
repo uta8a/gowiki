@@ -78,7 +78,8 @@ paths:
       responses:
         '200':
           description: 'logout'
-      security: []
+      security:
+        - cookieAuth: []
   '/groups':
     get:
       responses:
