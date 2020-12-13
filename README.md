@@ -17,3 +17,6 @@ $ make up # hot-reload server & front
 ```
 - 基本は上の２つをやってサーバは ``internal/`` を、フロントは ``web/pages`` を見るとOK
 - ``localhost:3000/``がトップページ
+
+# document
+- ``/api``にOpenAPIのAPI定義書を置いています。
