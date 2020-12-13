@@ -593,6 +593,16 @@ curl: (3) URL using bad/illegal format or missing URL
 db.Query("...a = ?", parameters...)
 ```
 
+# r.URL.Path
+- ``r.URL.Path``は``http://localhost:9000/articles/a`` -> ``/articles/a`` になる。
+
+# 作り込んだ脆弱性
+- update article
+  - groupnameのチェックしかしていなかった
+    - 別グループでも存在すれば記事を更新できるので、自分が所属していないグループの記事を荒らせる
+  - groupnameのチェックとidチェックしかしていない
+    - 別グループのgroupnameを指定すれば、自分が所属していないグループに無限に記事を送り込める
+
 # log
 - 2020/12/08
   - https://www.yoheim.net/blog.php?q=20170403
@@ -671,3 +681,7 @@ db.Query("...a = ?", parameters...)
   - 書き直す前提で書くとやばいことが分かった。でも学習段階では捨てる勢いで書くのも大事(いつまでたっても完成しないので)というのも分かった。
   - まずopenapiを書いて、login.goを頑張る。これ終わったらarticleまわり作り込んで、フロントを雑に書いてmarkdownをレンダリングできるようにして完成や
   - openapiとlogin.goを書いた。articleまわりを作る。まずはopenapiから書く。
+  - /articles書けた。/articles/:idに取り掛かる。
+  - deployは、1GBのEC2をとりあえず借りて動かしてみる。動くようなら問題ないのでRIを購入するという流れで行きたい。privateなので、ECSを使ってみる
+- 2020/12/13
+  - 今日でデプロイまで行きたいな
