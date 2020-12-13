@@ -6,10 +6,10 @@ import (
 	"fmt"
 	"github.com/suburi-dev/gowiki/internal/auth"
 	"github.com/suburi-dev/gowiki/internal/session"
-  "golang.org/x/crypto/bcrypt"
-  "log"
-  "net/http"
-  "io/ioutil"
+	"golang.org/x/crypto/bcrypt"
+	"io/ioutil"
+	"log"
+	"net/http"
 )
 
 type ResponseData struct {
@@ -18,13 +18,14 @@ type ResponseData struct {
 	Message  string `json:"message"`
 }
 type DelRes struct {
-	Status   int    `json:"status"`
-	Message  string `json:"message"`
+	Status  int    `json:"status"`
+	Message string `json:"message"`
 }
 type User struct {
-  Username string `json:"username"`
-  Password string `json:"password"`
+	Username string `json:"username"`
+	Password string `json:"password"`
 }
+
 func New(db *sql.DB, gs *session.Manager, w http.ResponseWriter, r *http.Request) error {
 	// POST
 	if r.Method == http.MethodPost {
@@ -33,8 +34,8 @@ func New(db *sql.DB, gs *session.Manager, w http.ResponseWriter, r *http.Request
 			return err
 		}
 		return nil
-  }
-  // DELETE
+	}
+	// DELETE
 	if r.Method == http.MethodDelete {
 		err := logout(db, gs, w, r)
 		if err != nil {
@@ -48,14 +49,14 @@ func New(db *sql.DB, gs *session.Manager, w http.ResponseWriter, r *http.Request
 
 // login
 func loginCheck(db *sql.DB, gs *session.Manager, w http.ResponseWriter, r *http.Request) error {
-  body, err := ioutil.ReadAll(r.Body)
-  if err != nil {
-    return err
-  }
-  var u User
-  if err := json.Unmarshal(body, &u); err != nil {
-    return err
-  }
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		return err
+	}
+	var u User
+	if err := json.Unmarshal(body, &u); err != nil {
+		return err
+	}
 	// validate
 	username := u.Username
 	password := u.Password
@@ -72,10 +73,10 @@ func loginCheck(db *sql.DB, gs *session.Manager, w http.ResponseWriter, r *http.
 		return err
 	}
 	// compare hash & password
-  err = bcrypt.CompareHashAndPassword([]byte(passwordHash), []byte(password))
+	err = bcrypt.CompareHashAndPassword([]byte(passwordHash), []byte(password))
 	if err != nil {
 		return err
-  }
+	}
 	// SessionStart
 	sess := gs.SessionStart(w, r)
 	sess.Set("username", username)
@@ -92,17 +93,17 @@ func loginCheck(db *sql.DB, gs *session.Manager, w http.ResponseWriter, r *http.
 }
 
 func logout(db *sql.DB, gs *session.Manager, w http.ResponseWriter, r *http.Request) error {
-  ok := gs.SessionCheck(w, r)
-  if !ok {
-    http.Error(w, "Unauthorized please login", http.StatusUnauthorized)
+	ok := gs.SessionCheck(w, r)
+	if !ok {
+		http.Error(w, "Unauthorized please login", http.StatusUnauthorized)
 		return nil
-  }
-  // get username from session then destroy session
-  sess := gs.SessionStart(w, r)
-  username := sess.Get("username")
-  gs.SessionDestroy(w, r)
-  // response data
-  response := DelRes{http.StatusOK, fmt.Sprintf("%s Logout Success", username)}
+	}
+	// get username from session then destroy session
+	sess := gs.SessionStart(w, r)
+	username := sess.Get("username")
+	gs.SessionDestroy(w, r)
+	// response data
+	response := DelRes{http.StatusOK, fmt.Sprintf("%s Logout Success", username)}
 	res, err := json.Marshal(response)
 	if err != nil {
 		return err

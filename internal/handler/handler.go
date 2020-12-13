@@ -3,13 +3,13 @@ package handler
 import (
 	"database/sql"
 	"fmt"
-	"github.com/suburi-dev/gowiki/internal/handler/health"
-	"github.com/suburi-dev/gowiki/internal/handler/private"
-	"github.com/suburi-dev/gowiki/internal/handler/user"
-	"github.com/suburi-dev/gowiki/internal/handler/group"
-	"github.com/suburi-dev/gowiki/internal/handler/login"
 	"github.com/suburi-dev/gowiki/internal/handler/article"
 	"github.com/suburi-dev/gowiki/internal/handler/articleid"
+	"github.com/suburi-dev/gowiki/internal/handler/group"
+	"github.com/suburi-dev/gowiki/internal/handler/health"
+	"github.com/suburi-dev/gowiki/internal/handler/login"
+	"github.com/suburi-dev/gowiki/internal/handler/private"
+	"github.com/suburi-dev/gowiki/internal/handler/user"
 	"github.com/suburi-dev/gowiki/internal/session"
 	"net/http"
 )
